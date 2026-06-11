@@ -1,0 +1,61 @@
+package templates
+
+css popupWrapper() {
+	position: relative;
+}
+
+css popup() {
+	position: absolute;
+	top: calc(100% + 8px);
+	right: 0;
+	min-width: 220px;
+	background-color: #2d2d2d;
+	border: 1px solid #444;
+	border-radius: 8px;
+	padding: 12px;
+	display: none;
+	box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+	z-index: 10001;
+}
+
+css popupItem() {
+	display: block;
+	width: 100%;
+	padding: 8px 12px;
+	background: none;
+	border: none;
+	color: white;
+	text-align: left;
+	cursor: pointer;
+	border-radius: 4px;
+}
+
+templ popupLogic() {
+	<style>
+    .popup-visible {
+        display: block !important;
+    }
+    </style>
+	<script>
+    function togglePopup(button) {
+        const popup = button.parentElement.querySelector(".popup");
+        document.querySelectorAll(".popup-visible").forEach(p => {
+            if (p !== popup) {
+                p.classList.remove("popup-visible");
+            }
+        });
+        popup.classList.toggle("popup-visible");
+    }
+
+    document.addEventListener("click", (e) => {
+        const wrapper = e.target.closest("[data-popup-wrapper]");
+
+        if (!wrapper) {
+            document.querySelectorAll(".popup-visible").forEach(p => {
+                p.classList.remove("popup-visible");
+            });
+        }
+    });
+
+    </script>
+}

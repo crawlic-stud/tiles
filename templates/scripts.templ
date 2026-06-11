@@ -1,0 +1,162 @@
+package templates
+
+templ movementScript() {
+	<script>
+    const isMoving = {};
+
+    async function moveCharacter(path, id, delay = 50) {
+        // if (isMoving[id]) return;
+        isMoving[id] = true;
+
+        try {
+            const character = document.querySelector(`[data-characterid="${id}"]`);
+            if (!character) return;
+
+            for (const [x, y] of path) {
+                const nextTile = document.querySelector(
+                    `[data-x="${x}"][data-y="${y}"]`
+                );
+                if (!nextTile) continue;
+
+                const firstRect = character.getBoundingClientRect();
+
+                // move in DOM
+                nextTile.appendChild(character);
+
+                const lastRect = character.getBoundingClientRect();
+
+                const dx = firstRect.left - lastRect.left;
+                const dy = firstRect.top - lastRect.top;
+
+                // invert
+                character.style.transition = "none";
+                character.style.transform = `translateX(-50%) translate(${dx}px, ${dy}px)`;
+
+                // force reflow
+                character.getBoundingClientRect();
+
+                // play
+                character.style.transition = `transform ${delay}ms linear`;
+                character.style.transform = `translateX(-50%) translate(0px, 0px)`;
+
+                await new Promise(r => setTimeout(r, delay));
+            }
+        } finally {
+            isMoving[id] = false;
+        }
+    }
+    </script>
+}
+
+templ selectDestinationScript() {
+	<script>
+    var currentPositions = {};
+
+    const characters = document.querySelectorAll('[class*="characterWrapperStyle"]');
+
+    for (let character of characters) {
+        currentPositions[character.dataset.characterId] = {
+            x: parseInt(character.dataset.x),
+            y: parseInt(character.dataset.y),
+        };
+    }
+
+    const SelectMode = {
+        Default: 0,
+        Move: 1,
+        Tile: 2,
+    };
+    const gameID = parseInt(window.location.pathname.split('/').pop());
+
+    var currentSelectMode = SelectMode.Default;
+    var currentPlaceTile = null;
+
+    function selecterActivate(btn) {
+        selecterDeactivate();
+        btn.classList.add("selected");
+    }
+
+    function selecterDeactivate() {
+        var otherBtns = document.querySelectorAll("button.selecter");
+        for (var btn of otherBtns) {
+            btn.classList.remove("selected");
+        }
+    }
+
+    function switchSelectMove(btn) {
+        if (currentSelectMode == SelectMode.Move) {
+            selecterDeactivate();
+            document.body.style.cursor = "auto";
+            currentSelectMode = SelectMode.Default;
+        } else {
+            selecterActivate(btn);
+            document.body.style.cursor = "move";
+            currentSelectMode = SelectMode.Move;
+        }
+    }
+
+    function switchSelectPlaceTile(btn) {
+        if (currentSelectMode == SelectMode.Tile && currentPlaceTile == btn.dataset.tile.toUpperCase()) {
+            selecterDeactivate();
+            currentPlaceTile = null;
+            document.body.style.cursor = "auto";
+            currentSelectMode = SelectMode.Default;
+        } else {
+            currentPlaceTile = btn.dataset.tile.toUpperCase();
+            selecterActivate(btn);
+            document.body.style.cursor = `pointer`;
+            currentSelectMode = SelectMode.Tile;
+        }
+        console.log("currentPlaceTile: ", currentPlaceTile);
+    }
+
+    var selectedCharacterId;
+
+    function onTileClick(tile) {
+        switch (currentSelectMode) {
+
+            case SelectMode.Default:
+                const character = tile.querySelector('[class*="characterWrapperStyle"]'); 
+                if (!character) {
+                    console.log("No character on tile");
+                    return;
+                }
+                selectedCharacterId = character.dataset.characterid;
+                console.log("selected character: ", selectedCharacterId);
+                currentSelectMode = SelectMode.Move;
+                document.body.style.cursor = "move";
+                break;
+
+            case SelectMode.Move:
+                if (selectedCharacterId == null) {
+                    alert("select character first");
+                    return;
+                }
+
+                if (isMoving[selectedCharacterId]) {
+                    return;
+                }
+
+                fetch('/characters/move', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        id: parseInt(selectedCharacterId),
+                        gameID: gameID,
+                        x: parseInt(tile.dataset.x),
+                        y: parseInt(tile.dataset.y),
+                    })
+                })
+                .catch(error => {
+                    alert(error);
+                });
+                break;
+            
+            case SelectMode.Tile:
+                break;
+        }
+    }
+    </script>
+}

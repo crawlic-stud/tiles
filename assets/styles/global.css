@@ -1,0 +1,26 @@
+.walkable:hover {
+  z-index: 1000;
+  outline: 2px solid greenyellow;
+  border-radius: 5px;
+}
+
+.not-walkable:hover {
+  z-index: 1000;
+  outline: 2px solid rgb(216, 74, 74);
+  border-radius: 5px;
+  cursor: not-allowed;
+}
+
+body {
+  margin: 0;
+  font-family: "Papyrus";
+  background-color: #222;
+}
+
+.selected {
+  outline: 5px solid greenyellow;
+}
+
+.pointer {
+  cursor: pointer !important;
+}

@@ -1,0 +1,31 @@
+package templates
+
+css errorContainer() {
+	text-align: center;
+	max-width: 100%;
+	font-family: sans-serif;
+	background: #111;
+	color: #fff;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	height: 100vh;
+	flex-direction: column;
+}
+
+css errorMessage() {
+	color: white;
+}
+
+templ ErrorPage(status int, message string) {
+	<style>
+    body {
+        margin: 0;
+    }
+    </style>
+	<div class={ errorContainer() }>
+		<h1 class={ errorMessage() }>[{ status }] Something went wrong...</h1>
+		<br/>
+		<p class={ errorMessage() }>{ message }</p>
+	</div>
+}

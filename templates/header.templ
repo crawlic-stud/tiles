@@ -1,0 +1,279 @@
+package templates
+
+import "tiles/pkg/models"
+
+css header() {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding: 16px 40px;
+	background-color: #222;
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	z-index: 10000;
+}
+
+css logo() {
+	color: white;
+	font-size: 24px;
+	font-weight: bold;
+}
+
+css icon() {
+	width: 24px;
+	height: 24px;
+}
+
+css navButtons() {
+	display: flex;
+	gap: 12px;
+}
+
+func getButtonColor(main bool) string {
+	if main {
+		return "#4a90e2"
+	}
+	return "#444"
+}
+
+css navButton(main bool) {
+	padding: 10px 18px;
+	border: none;
+	border-radius: 6px;
+	background-color: { getButtonColor(main) };
+	color: white;
+	cursor: pointer;
+	transition: background-color 0.2s ease;
+}
+
+css iconButton(main bool) {
+	background-color: { getButtonColor(main) };
+	border-radius: 15px;
+	color: white;
+	cursor: pointer;
+	transition: background-color 0.2s ease;
+	border: none;
+}
+
+css checkboxItem() {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	width: 100%;
+	padding: 8px 12px;
+	color: white;
+	cursor: pointer;
+	border-radius: 4px;
+	box-sizing: border-box;
+}
+
+css connectionCircle() {
+	width: 20px;
+	height: 20px;
+	background-color: greenyellow;
+	border-radius: 50%;
+}
+
+css logoContainer() {
+	display: flex;
+	align-items: center; 
+    gap: 8px;
+}
+
+css scaleControl() {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	color: white;
+}
+
+css scaleSlider() {
+	width: 140px;
+	accent-color: #4a90e2;
+	cursor: pointer;
+}
+
+css scaleLabel() {
+	min-width: 48px;
+	text-align: right;
+	font-size: 12px;
+	opacity: 0.8;
+}
+
+css scaleButton() {
+	background-color: #444;
+	border: none;
+	color: white;
+	width: 28px;
+	height: 28px;
+	border-radius: 6px;
+	cursor: pointer;
+	font-size: 16px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	transition: background-color 0.2s ease;
+}
+
+templ Header(game models.Game) {
+	@popupLogic()
+	<script>
+    async function toggleTilesVisibility(enabled) {
+        try {
+            await fetch("/settings/hideTiles", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    hide: enabled,
+                    gameID: gameID,
+                })
+            });
+
+            window.location.reload();
+        } catch (err) {
+            console.error(err);
+        }
+    }
+    </script>
+	<header class={ header() }>
+		<div class={ logoContainer() }>
+			<div id="connection-circle" class={ connectionCircle() }></div>
+			<div class={ logo() }>Tiles</div>
+		</div>
+		<div class={ navButtons() }>
+			<button class={ navButton(true) }>New Game</button>
+			<button class={ "selecter", iconButton(false) } onclick="switchSelectMove(this)">
+				<img src="/assets/icons/move.svg" class={ icon() }/>
+			</button>
+			<div class={ scaleControl() }>
+				<button class={ scaleButton() } onclick="decreaseScale()">−</button>
+				<input
+					id="scale-slider"
+					type="range"
+					min="0"
+					max="8"
+					step="1"
+					value="3"
+					class={ scaleSlider() }
+					oninput="setScaleFromSlider(this.value)"
+				/>
+				<button class={ scaleButton() } onclick="increaseScale()">+</button>
+				<span id="scale-label" class={ scaleLabel() }>100%</span>
+			</div>
+			<script>
+				const scaleSteps = [25, 50, 67, 100, 150, 200, 300, 400, 500];
+				let scale = 1;
+				let currentIndex = 3; // 100%
+				const SCALE_KEY = "tiles.scale.index";
+
+				function setScale(newScale) {
+					scale = newScale;
+					document.documentElement.style.setProperty('--grid-scale', scale);
+				}
+
+				function applyScaleByIndex(index) {
+					currentIndex = index;
+
+					const percent = scaleSteps[index];
+					setScale(percent / 100);
+
+					document.getElementById("scale-slider").value = index;
+					document.getElementById("scale-label").textContent = percent + "%";
+					
+					localStorage.setItem(SCALE_KEY, String(index));
+				}
+
+				function setScaleFromSlider(index) {
+					applyScaleByIndex(Number(index));
+				}
+
+				function increaseScale() {
+					if (currentIndex < scaleSteps.length - 1) {
+						applyScaleByIndex(currentIndex + 1);
+					}
+				}
+
+				function decreaseScale() {
+					if (currentIndex > 0) {
+						applyScaleByIndex(currentIndex - 1);
+					}
+				}
+
+				// init
+				const savedIndex = localStorage.getItem(SCALE_KEY);
+				applyScaleByIndex(savedIndex !== null ? Number(savedIndex) : 3);
+			</script>
+			<div data-popup-wrapper class={ popupWrapper() }>
+				<button
+					class={ navButton(false) }
+					onclick="togglePopup(this)"
+				>
+					Tiles
+				</button>
+				<div class={ popup(), "popup" }>
+					<button
+						data-tile={ models.TileFloor }
+						class={ "selecter", iconButton(false) }
+						onclick="switchSelectPlaceTile(this)"
+					>
+						<img src="/assets/icons/remove.svg" class={ icon() }/>
+					</button>
+					<button
+						data-tile={ models.TileWall }
+						class={ "selecter", iconButton(false) }
+						onclick="switchSelectPlaceTile(this)"
+					>
+						<img src="/assets/tiles/wall.png" class={ icon() }/>
+					</button>
+					<button
+						data-tile={ models.TileWater }
+						class={ "selecter", iconButton(false) }
+						onclick="switchSelectPlaceTile(this)"
+					>
+						<img src="/assets/tiles/water.png" class={ icon() }/>
+					</button>
+					<button
+						data-tile={ models.TileDoor }
+						class={ "selecter", iconButton(false) }
+						onclick="switchSelectPlaceTile(this)"
+					>
+						<img src="/assets/tiles/door.png" class={ icon() }/>
+					</button>
+					<button
+						data-tile={ models.TileObstacle }
+						class={ "selecter", iconButton(false) }
+						onclick="switchSelectPlaceTile(this)"
+					>
+						<img src="/assets/tiles/obstacle.png" class={ icon() }/>
+					</button>
+				</div>
+			</div>
+			<div data-popup-wrapper class={ popupWrapper() }>
+				<button
+					class={ navButton(false) }
+					onclick="togglePopup(this)"
+				>
+					Settings
+				</button>
+				<div class={ popup(), "popup" }>
+					<label class={ checkboxItem() }>
+						<span>Hide tiles</span>
+						<input
+							id="hide-tiles"
+							type="checkbox"
+							onchange="toggleTilesVisibility(this.checked)"
+						/>
+					</label>
+				</div>
+			</div>
+		</div>
+	</header>
+	<script>
+    const hideTiles = {{ game.HideTiles }};
+    document.getElementById("hide-tiles").checked = hideTiles;
+    </script>
+}

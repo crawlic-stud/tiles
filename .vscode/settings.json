@@ -1,0 +1,80 @@
+{
+  "sqltools.connections": [
+    {
+      "previewLimit": 50,
+      "server": "localhost",
+      "port": 5432,
+      "driver": "PostgreSQL",
+      "name": "local",
+      "database": "postgres",
+      "username": "postgres",
+      "password": "password"
+    },
+    {
+      "server": "http://ch-hot-archive.db.stg.bozon.tech",
+      "port": 8123,
+      "database": "ob",
+      "useJWT": false,
+      "requestTimeout": 30000,
+      "enableTls": false,
+      "previewLimit": 50,
+      "password": "p6Gw:dRWKCJFl6QkvNOw",
+      "username": "nikkuznetsovse",
+      "driver": "ClickHouse",
+      "group": "ozon",
+      "name": "click stg"
+    },
+    {
+      "server": "http://ch-hot-archive.db.prod.bozon.tech",
+      "port": 8123,
+      "database": "ob",
+      "useJWT": false,
+      "requestTimeout": 30000,
+      "enableTls": false,
+      "previewLimit": 50,
+      "password": "vuhvic-pixsan-coVqu8",
+      "username": "nikkuznetsovse",
+      "driver": "ClickHouse",
+      "group": "ozon",
+      "name": "click prod"
+    },
+    {
+      "previewLimit": 50,
+      "server": "localhost",
+      "port": 5433,
+      "driver": "PostgreSQL",
+      "name": "local-test",
+      "database": "exupery_test",
+      "username": "postgres",
+      "password": "postgres"
+    },
+    {
+      "previewLimit": 50,
+      "server": "db-exupery-ng02-z502.v.stg.bozon.tech",
+      "port": 5432,
+      "driver": "PostgreSQL",
+      "name": "exupery stg",
+      "group": "ozon",
+      "database": "exupery-ng",
+      "username": "nikkuznetsovse",
+      "password": "@grQvhxmzFuIAryV5<e3QyN@KOCyT>#4"
+    },
+    {
+      "previewLimit": 50,
+      "server": "db-elvira01-z504.v.stg.bozon.tech",
+      "port": 5432,
+      "driver": "PostgreSQL",
+      "name": "elvira stg",
+      "group": "ozon",
+      "database": "elvira",
+      "username": "nikkuznetsovse",
+      "password": "@grQvhxmzFuIAryV5<e3QyN@KOCyT>#4"
+    },
+    {
+      "previewLimit": 50,
+      "driver": "SQLite",
+      "name": "tiles",
+      "database": "tiles.db"
+    }
+  ]
+}

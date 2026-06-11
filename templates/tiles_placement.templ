@@ -1,0 +1,108 @@
+package templates
+
+templ tilesPlacementScript() {
+	<script>
+    var isDraggingTiles = false;
+    var pendingTiles = [];
+    var paintedTiles = new Set();
+
+    document.addEventListener("mousedown", () => {
+        if (currentSelectMode !== SelectMode.Tile) {
+            return;
+        }
+
+        isDraggingTiles = true;
+    });
+
+    document.addEventListener("mouseup", () => {
+        if (!isDraggingTiles) {
+            return;
+        }
+
+        isDraggingTiles = false;
+        flushPendingTiles();
+    });
+
+    function placeTileLocally(tile) {
+        if (currentPlaceTile == null) {
+            return;
+        }
+
+        const x = parseInt(tile.dataset.x);
+        const y = parseInt(tile.dataset.y);
+
+        const key = `${x}:${y}`;
+
+        if (paintedTiles.has(key)) {
+            return;
+        }
+
+        paintedTiles.add(key);
+
+        pendingTiles.push({
+            type: currentPlaceTile,
+            x: x,
+            y: y,
+        });
+
+        if (currentPlaceTile != "") {
+            tile.style.backgroundImage = `url('/assets/tiles/${currentPlaceTile.toLowerCase()}.png')`;
+        } else {
+            tile.style.backgroundImage = "none";
+        }
+    }
+
+    function flushPendingTiles() {
+        if (pendingTiles.length === 0) {
+            return;
+        }
+
+        const tiles = [...pendingTiles];
+
+        pendingTiles = [];
+        paintedTiles.clear();
+
+        fetch('/games/tiles', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                gameID: gameID,
+                tiles: tiles
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log("flush completed", data);
+        })
+        .catch(error => {
+            console.error(error);
+        });
+    }
+
+    function initTileDragPainting() {
+        const tiles = document.querySelectorAll("[data-x][data-y]");
+
+        for (const tile of tiles) {
+            tile.addEventListener("mousedown", () => {
+                if (currentSelectMode !== SelectMode.Tile) {
+                    return;
+                }
+
+                placeTileLocally(tile);
+            });
+
+            tile.addEventListener("mouseenter", () => {
+                if (
+                    currentSelectMode === SelectMode.Tile &&
+                    isDraggingTiles
+                ) {
+                    placeTileLocally(tile);
+                }
+            });
+        }
+    }
+    initTileDragPainting();
+    </script>
+}

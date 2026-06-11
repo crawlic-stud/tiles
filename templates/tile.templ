@@ -1,0 +1,56 @@
+package templates
+
+import (
+	"fmt"
+	"tiles/pkg/models"
+)
+
+css tileTexture(tile models.Tile, hidden bool) {
+	background-image: { tileBackgroundImage(tile.Type, hidden) };
+	background-size: cover;
+	background-position: center;
+	background-repeat: no-repeat;
+	box-sizing: border-box;
+}
+
+css tileStyle(tileSize int) {
+	width: calc({ px(tileSize) } * var(--grid-scale, 1));
+	height: calc({ px(tileSize) } * var(--grid-scale, 1));
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	aspect-ratio: 1;
+	position: relative;
+}
+
+var tileImageMap = map[models.TileType]string{
+	models.TileDoor:     "door.png",
+	models.TileObstacle: "obstacle.png",
+	models.TileWall:     "wall.png",
+	models.TileWater:    "water.png",
+}
+
+func tileBackgroundImage(tileType models.TileType, hidden bool) string {
+	if hidden {
+		return "none"
+	}
+	return fmt.Sprintf(`url('/assets/tiles/%s')`, tileImageMap[tileType])
+}
+
+templ Tile(tile models.Tile, tileSize, x, y int, hideTiles bool) {
+	<div
+		data-x={ x }
+		data-y={ y }
+		class={
+			templ.KV("walkable", tile.IsWalkable()),
+			templ.KV("not-walkable", !tile.IsWalkable()),
+			tileStyle(tileSize),
+			tileTexture(tile, hideTiles),
+		}
+		onclick="onTileClick(this)"
+	>
+		if tile.Character != nil {
+			@Character(tile, tileSize, x, y)
+		}
+	</div>
+}

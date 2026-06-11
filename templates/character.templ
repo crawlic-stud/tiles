@@ -1,0 +1,109 @@
+package templates
+
+import (
+	"fmt"
+	"strings"
+	"tiles/pkg/models"
+)
+
+var characterImageMap = map[models.CharacterType]string{
+	models.CharacterEnemy: "skeleton.png",
+	models.CharacterHero:  "hero.png",
+}
+
+func characterBackgroundImage(character *models.Character) string {
+	return fmt.Sprintf("url('/assets/characters/%s')", characterImageMap[character.Type])
+}
+
+func px(value int) string {
+	return fmt.Sprintf("%dpx", value)
+}
+
+func scaleToCharacter(character *models.Character, tileSize int) int {
+	return int(float64(tileSize) * character.Scale)
+}
+
+func characterSize(character *models.Character, tileSize int) templ.SafeCSSProperty {
+	return templ.SafeCSSProperty(fmt.Sprintf("calc(%dpx * var(--grid-scale, 1))", scaleToCharacter(character, tileSize)))
+}
+
+css characterWrapperStyle(character *models.Character, tileSize int) {
+	position: absolute;
+	left: 50%;
+	bottom: 0;
+	transform: translateX(-50%);
+	width: { characterSize(character, tileSize) };
+	height: { characterSize(character, tileSize) };
+	z-index: 1000;
+}
+
+css characterNameStyle(character *models.Character, tileSize int) {
+	position: absolute;
+	bottom: { characterSize(character, tileSize) };
+	left: 50%;
+	transform: translateX(-50%);
+	padding: 2px 6px;
+	border-radius: 6px;
+	font-size: 16px;
+	font-weight: 700;
+	line-height: 1;
+	color: white;
+	background: rgba(0, 0, 0, 0.75);
+	white-space: nowrap;
+	text-shadow: -1px -1px 0 #000,
+        1px -1px 0 #000,
+        -1px  1px 0 #000,
+        1px  1px 0 #000;
+	box-shadow: 0 0 4px rgba(0, 0, 0, 0.8);
+	z-index: 1002;
+}
+
+const dropShadowCharacter = `
+    drop-shadow(0 0 1px black)
+    drop-shadow(0 0 2px black)
+    drop-shadow(1px 0 0 __color__)
+    drop-shadow(-1px 0 0 __color__)
+    drop-shadow(0 1px 0 __color__)
+    drop-shadow(0 -1px 0 __color__);
+`
+
+func coloredOutlineFilter(character *models.Character) templ.SafeCSSProperty {
+	color := "white"
+	switch character.Type {
+	case models.CharacterHero:
+		color = "#68fc3f"
+	case models.CharacterEnemy:
+		color = "#fc4e4e"
+	}
+	return templ.SafeCSSProperty(strings.ReplaceAll(dropShadowCharacter, "__color__", color))
+}
+
+css characterStyle(character *models.Character, tileSize int) {
+	position: absolute;
+	left: 50%;
+	bottom: 0;
+	transform: translateX(-50%);
+	width: { characterSize(character, tileSize) };
+	height: { characterSize(character, tileSize) };
+	background-image: { characterBackgroundImage(character) };
+	background-size: cover;
+	background-position: center;
+	background-repeat: no-repeat;
+	box-sizing: border-box;
+	filter: { coloredOutlineFilter(character) };
+	z-index: 1001;
+}
+
+templ Character(tile models.Tile, tileSize, x, y int) {
+	<div
+		data-x={ x }
+		data-y={ y }
+		data-characterid={ tile.Character.ID }
+		class={ "pointer", characterWrapperStyle(tile.Character, tileSize) }
+	>
+		<div class={ characterNameStyle(tile.Character, tileSize) }>
+			{ tile.Character.Name }
+		</div>
+		<div class={ tileStyle(tileSize), characterStyle(tile.Character, tileSize) }></div>
+	</div>
+}

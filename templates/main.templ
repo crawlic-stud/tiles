@@ -1,0 +1,33 @@
+package templates
+
+import "tiles/pkg/models"
+
+templ globalStyles() {
+	<style>
+        
+    </style>
+}
+
+templ Main(game models.Game) {
+	<!DOCTYPE html>
+	<html lang="en">
+		<head>
+			<meta charset="UTF-8"/>
+			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+			<title>Tiles (In game #{ game.ID })</title>
+			<link rel="icon" href="/assets/icons/favicon.svg" type="image/svg+xml"/>
+			<link rel="stylesheet" href="/assets/styles/global.css"/>
+		</head>
+		<body>
+			@templ.Flush() {
+				@Header(game)
+			}
+			<div></div>
+			@Grid(game)
+			@movementScript()
+			@selectDestinationScript()
+			@socketScript()
+			@tilesPlacementScript()
+		</body>
+	</html>
+}
