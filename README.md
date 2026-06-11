@@ -2,6 +2,8 @@
 
 Tiles is a D&D inspired game, in which you can create maps, put characters on them and move them around. It's good for representing visuals for D&D sessions.
 
+<img width="2550" height="1892" alt="image" src="https://github.com/user-attachments/assets/171510fe-e424-4812-90d4-0ef759bb5487" />
+
 ## Run
 
 Simplest and fastest way to run is:
