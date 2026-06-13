@@ -171,7 +171,7 @@ func findPathAStar(
 
 	return nil
 }
-func CalculateAndSavePath(
+func FindPath(
 	grid models.Grid,
 	character *models.Character,
 	target models.Position,

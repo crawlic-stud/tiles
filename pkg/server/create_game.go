@@ -2,7 +2,6 @@ package server
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"tiles/pkg/db"
 	"tiles/pkg/models"
@@ -27,31 +26,19 @@ func (h *Handler) CreateGame(r *http.Request) Response {
 		return JSONErrorf(http.StatusBadRequest, "invalid request body: %v", err)
 	}
 
-	fmt.Println(req)
-
-	game := models.Game{
-		Width:    req.Width,
-		Height:   req.Height,
-		TileSize: req.TileSize,
-	}
-	grid := game.InitGrid()
-
-	err = game.AddCustomTiles(req.CustomTiles)
+	tilesJSON, err := json.Marshal(req.CustomTiles)
 	if err != nil {
-		return JSONErrorf(http.StatusBadRequest, "failed to add custom tiles: %v", err)
-	}
-
-	gridJSON, err := json.Marshal(grid)
-	if err != nil {
-		return JSONErrorf(http.StatusBadRequest, "failed to serialize grid: %v", err)
+		return JSONErrorf(http.StatusBadRequest, "failed to serialize tiles: %v", err)
 	}
 
 	var gameDb db.Game
 	if err = h.Store.WithTx(r.Context(), func(q *db.Queries) error {
 		gameDb, err = q.CreateGame(r.Context(), db.CreateGameParams{
-			Background: req.BackgroundImage,
-			Grid:       string(gridJSON),
-			TileSize:   int64(req.TileSize),
+			Background:  req.BackgroundImage,
+			Width:       int64(req.Width),
+			Height:      int64(req.Height),
+			TileSize:    int64(req.TileSize),
+			CustomTiles: string(tilesJSON),
 		})
 		if err != nil {
 			return err

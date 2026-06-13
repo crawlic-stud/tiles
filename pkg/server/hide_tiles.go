@@ -1,7 +1,6 @@
 package server
 
 import (
-	"fmt"
 	"net/http"
 	"tiles/pkg/db"
 )
@@ -16,8 +15,6 @@ func (h *Handler) HideTiles(r *http.Request) Response {
 	if err != nil {
 		return JSONErrorf(http.StatusBadRequest, "invalid request body: %v", err)
 	}
-
-	fmt.Println("hide", req.Hide, "game", req.GameID)
 
 	if err = h.Store.HideGameTiles(r.Context(), db.HideGameTilesParams{
 		HideTiles: req.Hide,

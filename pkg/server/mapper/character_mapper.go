@@ -5,7 +5,7 @@ import (
 	"tiles/pkg/models"
 )
 
-func CharacterFromDb(character db.Character) *models.Character {
+func CharacterFromDB(character db.Character) *models.Character {
 	return &models.Character{
 		ID:    int(character.ID),
 		Name:  character.Name,
@@ -15,7 +15,7 @@ func CharacterFromDb(character db.Character) *models.Character {
 	}
 }
 
-func GameCharacterFromDb[T db.GetGameCharactersRow | db.GetGameCharacterByIDRow](value T) *models.Character {
+func GameCharacterFromDB[T db.GetGameCharactersRow | db.GetGameCharacterByIDRow](value T) *models.Character {
 	character := db.GetGameCharactersRow(value)
 	return &models.Character{
 		ID:    int(character.ID),

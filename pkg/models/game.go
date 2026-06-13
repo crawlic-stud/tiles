@@ -1,7 +1,6 @@
 package models
 
 import (
-	"encoding/json"
 	"fmt"
 )
 
@@ -13,12 +12,7 @@ type Game struct {
 	TileSize        int
 	BackgroundImage string
 	HideTiles       bool
-}
-
-type CustomTile struct {
-	Type TileType `json:"type"`
-	X    int      `json:"x"`
-	Y    int      `json:"y"`
+	CustomTiles     CustomTiles
 }
 
 type GridOption func(Grid)
@@ -34,7 +28,8 @@ func (g *Game) InitGrid(opts ...GridOption) Grid {
 	return g.Grid
 }
 
-func (g *Game) AddCustomTiles(tiles []CustomTile) error {
+func (g *Game) SetCustomTiles(tiles []CustomTile) error {
+	g.CustomTiles = make(CustomTiles, len(tiles))
 	for _, tile := range tiles {
 		if tile.Y < 0 || tile.Y >= g.Height {
 			return fmt.Errorf("tile.Y out of range: %d", tile.Y)
@@ -42,13 +37,8 @@ func (g *Game) AddCustomTiles(tiles []CustomTile) error {
 		if tile.X < 0 || tile.X >= g.Width {
 			return fmt.Errorf("tile.X out of range: %d", tile.X)
 		}
-
+		g.CustomTiles.Set(tile)
 		g.Grid.SetTile(tile.X, tile.Y, Tile{Type: tile.Type})
 	}
 	return nil
-}
-
-func (g *Game) GetGridJSON() (string, error) {
-	grid, err := json.Marshal(g.Grid)
-	return string(grid), err
 }

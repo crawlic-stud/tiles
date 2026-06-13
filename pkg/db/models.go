@@ -13,11 +13,13 @@ type Character struct {
 }
 
 type Game struct {
-	ID         int64
-	Grid       string
-	Background string
-	TileSize   int64
-	HideTiles  bool
+	ID          int64
+	CustomTiles string
+	Background  string
+	TileSize    int64
+	HideTiles   bool
+	Width       int64
+	Height      int64
 }
 
 type GameCharacter struct {

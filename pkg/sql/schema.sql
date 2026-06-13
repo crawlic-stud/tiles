@@ -1,9 +1,11 @@
 CREATE TABLE games(
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    grid TEXT NOT NULL,
+    custom_tiles TEXT NOT NULL,
     background TEXT NOT NULL,
     tile_size INTEGER NOT NULL,
-    hide_tiles BOOLEAN NOT NULL DEFAULT FALSE
+    hide_tiles BOOLEAN NOT NULL DEFAULT FALSE,
+    width INTEGER NOT NULL,
+    height INTEGER NOT NULL
 );
 
 CREATE TABLE characters(
