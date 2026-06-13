@@ -24,7 +24,13 @@ curl --request POST \
   "tileSize": 50,
   "width": 34,
   "height": 88,
-  "customTiles": [],
+  "customTiles": [
+    {
+      "x": 10,
+      "y": 10,
+      "type": "WATER"
+    }
+  ],
   "characters": [
     {
       "id": 0,
