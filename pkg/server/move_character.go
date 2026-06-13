@@ -1,11 +1,10 @@
 package server
 
 import (
-	"encoding/json"
 	"log"
 	"net/http"
 	"tiles/pkg/db"
-	"tiles/pkg/game"
+	gamelogic "tiles/pkg/game"
 	"tiles/pkg/models"
 	"tiles/pkg/server/mapper"
 )
@@ -31,7 +30,7 @@ func (h *Handler) MoveCharacter(r *http.Request) Response {
 
 	log.Printf("moving character %d in game %d", req.ID, req.GameID)
 
-	gameDb, err := h.Store.GetGameByID(r.Context(), req.GameID)
+	game, err := h.Store.GetGameWithGrid(r.Context(), req.GameID)
 	if err != nil {
 		return JSONErrorf(http.StatusBadRequest, "cant find game with ID=%d: %v", req.GameID, err)
 	}
@@ -44,14 +43,8 @@ func (h *Handler) MoveCharacter(r *http.Request) Response {
 		return JSONErrorf(http.StatusBadRequest, "cant find character with ID=%d and gameID=%d: %v", req.ID, req.GameID, err)
 	}
 
-	var grid models.Grid
-	err = json.Unmarshal([]byte(gameDb.Grid), &grid)
-	if err != nil {
-		return JSONErrorf(http.StatusBadRequest, "failed to parse grid: %v", err)
-	}
-
-	character := mapper.GameCharacterFromDb(characterDb)
-	path := game.CalculateAndSavePath(grid, character, models.Position{
+	character := mapper.GameCharacterFromDB(characterDb)
+	path := gamelogic.FindPath(game.Grid, character, models.Position{
 		X: int(req.X),
 		Y: int(req.Y),
 	})
@@ -70,7 +63,7 @@ func (h *Handler) MoveCharacter(r *http.Request) Response {
 	}
 
 	data := MoveCharacterResponse{Path: mapper.MapPath(path), ID: req.ID}
-	if err = h.hub.BroadcastJSON(gameDb.ID, MessageTypeMove, data); err != nil {
+	if err = h.hub.BroadcastJSON(game.ID, MessageTypeMove, data); err != nil {
 		return JSONErrorf(http.StatusInternalServerError, "failed to broadcast: %v", err)
 	}
 

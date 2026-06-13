@@ -2,7 +2,7 @@
 SELECT * FROM games WHERE id = ?;
 
 -- name: CreateGame :one
-INSERT INTO games (grid, background, tile_size) VALUES (?, ?, ?) RETURNING *;
+INSERT INTO games (width, height, custom_tiles, background, tile_size) VALUES (?, ?, ?, ?, ?) RETURNING *;
 
 -- name: CreateCharacter :one
 INSERT INTO characters (name, type, scale, image) VALUES (?, ?, ?, ?) RETURNING *;
@@ -23,8 +23,8 @@ WHERE gc.game_id = ?;
 -- name: UpdateCharacterPosition :exec
 UPDATE game_characters SET x = ?, y = ? WHERE game_id = ? AND character_id = ?;
 
--- name: UpdateGameGrid :exec
-UPDATE games SET grid = ? WHERE id = ?;
+-- name: UpdateGameTiles :exec
+UPDATE games SET custom_tiles = ? WHERE id = ?;
 
 -- name: HideGameTiles :exec
 UPDATE games SET hide_tiles = ? WHERE id = ?;

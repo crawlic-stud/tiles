@@ -1,6 +1,7 @@
 package server
 
 import (
+	"encoding/json"
 	"net/http"
 	"tiles/pkg/db"
 	"tiles/pkg/models"
@@ -17,24 +18,23 @@ func (h *Handler) PlaceTiles(r *http.Request) Response {
 		return JSONErrorf(http.StatusBadRequest, "invalid request body: %v", err)
 	}
 
-	game, err := h.getGameWithGrid(r.Context(), req.GameID)
+	game, err := h.Store.GetGameWithGrid(r.Context(), req.GameID)
 	if err != nil {
 		return JSONError(http.StatusBadRequest, err.Error())
 	}
 
-	if err = game.AddCustomTiles(req.Tiles); err != nil {
-		return JSONError(http.StatusBadRequest, err.Error())
+	for _, tile := range req.Tiles {
+		game.CustomTiles.Set(tile)
 	}
-
-	gridJSON, err := game.GetGridJSON()
+	tilesJSON, err := json.Marshal(game.CustomTiles.ToSlice())
 	if err != nil {
-		return JSONErrorf(http.StatusInternalServerError, "corrupted JSON: %v", err)
+		return JSONErrorf(http.StatusBadRequest, "failed to serialize tiles: %v", err)
 	}
 
 	// TODO: when moving to postgres - update json directly
-	if err = h.Store.UpdateGameGrid(r.Context(), db.UpdateGameGridParams{
-		Grid: gridJSON,
-		ID:   req.GameID,
+	if err = h.Store.UpdateGameTiles(r.Context(), db.UpdateGameTilesParams{
+		CustomTiles: string(tilesJSON),
+		ID:          req.GameID,
 	}); err != nil {
 		return JSONErrorf(http.StatusInternalServerError, "failed to update game grid: %v", err)
 	}

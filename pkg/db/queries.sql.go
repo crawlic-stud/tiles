@@ -39,24 +39,34 @@ func (q *Queries) CreateCharacter(ctx context.Context, arg CreateCharacterParams
 }
 
 const createGame = `-- name: CreateGame :one
-INSERT INTO games (grid, background, tile_size) VALUES (?, ?, ?) RETURNING id, grid, background, tile_size, hide_tiles
+INSERT INTO games (width, height, custom_tiles, background, tile_size) VALUES (?, ?, ?, ?, ?) RETURNING id, custom_tiles, background, tile_size, hide_tiles, width, height
 `
 
 type CreateGameParams struct {
-	Grid       string
-	Background string
-	TileSize   int64
+	Width       int64
+	Height      int64
+	CustomTiles string
+	Background  string
+	TileSize    int64
 }
 
 func (q *Queries) CreateGame(ctx context.Context, arg CreateGameParams) (Game, error) {
-	row := q.db.QueryRowContext(ctx, createGame, arg.Grid, arg.Background, arg.TileSize)
+	row := q.db.QueryRowContext(ctx, createGame,
+		arg.Width,
+		arg.Height,
+		arg.CustomTiles,
+		arg.Background,
+		arg.TileSize,
+	)
 	var i Game
 	err := row.Scan(
 		&i.ID,
-		&i.Grid,
+		&i.CustomTiles,
 		&i.Background,
 		&i.TileSize,
 		&i.HideTiles,
+		&i.Width,
+		&i.Height,
 	)
 	return i, err
 }
@@ -90,7 +100,7 @@ func (q *Queries) CreateGameCharacter(ctx context.Context, arg CreateGameCharact
 }
 
 const getGameByID = `-- name: GetGameByID :one
-SELECT id, grid, background, tile_size, hide_tiles FROM games WHERE id = ?
+SELECT id, custom_tiles, background, tile_size, hide_tiles, width, height FROM games WHERE id = ?
 `
 
 func (q *Queries) GetGameByID(ctx context.Context, id int64) (Game, error) {
@@ -98,10 +108,12 @@ func (q *Queries) GetGameByID(ctx context.Context, id int64) (Game, error) {
 	var i Game
 	err := row.Scan(
 		&i.ID,
-		&i.Grid,
+		&i.CustomTiles,
 		&i.Background,
 		&i.TileSize,
 		&i.HideTiles,
+		&i.Width,
+		&i.Height,
 	)
 	return i, err
 }
@@ -224,16 +236,16 @@ func (q *Queries) UpdateCharacterPosition(ctx context.Context, arg UpdateCharact
 	return err
 }
 
-const updateGameGrid = `-- name: UpdateGameGrid :exec
-UPDATE games SET grid = ? WHERE id = ?
+const updateGameTiles = `-- name: UpdateGameTiles :exec
+UPDATE games SET custom_tiles = ? WHERE id = ?
 `
 
-type UpdateGameGridParams struct {
-	Grid string
-	ID   int64
+type UpdateGameTilesParams struct {
+	CustomTiles string
+	ID          int64
 }
 
-func (q *Queries) UpdateGameGrid(ctx context.Context, arg UpdateGameGridParams) error {
-	_, err := q.db.ExecContext(ctx, updateGameGrid, arg.Grid, arg.ID)
+func (q *Queries) UpdateGameTiles(ctx context.Context, arg UpdateGameTilesParams) error {
+	_, err := q.db.ExecContext(ctx, updateGameTiles, arg.CustomTiles, arg.ID)
 	return err
 }
