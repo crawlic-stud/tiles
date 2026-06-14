@@ -13,9 +13,7 @@ templ movementScript() {
             if (!character) return;
 
             for (const [x, y] of path) {
-                const nextTile = document.querySelector(
-                    `[data-x="${x}"][data-y="${y}"]`
-                );
+                const nextTile = document.querySelector(`[data-x="${x}"][data-y="${y}"]`);
                 if (!nextTile) continue;
 
                 const firstRect = character.getBoundingClientRect();
@@ -113,18 +111,16 @@ templ selectDestinationScript() {
     var selectedCharacterId;
 
     function onTileClick(tile) {
-        switch (currentSelectMode) {
+        const character = tile.querySelector('[class*="characterWrapperStyle"]'); 
+        if (character) {
+            selectedCharacterId = character.dataset.characterid;
+            console.log("selected character: ", selectedCharacterId);
+            currentSelectMode = SelectMode.Move;
+            document.body.style.cursor = "move";
+        }
 
+        switch (currentSelectMode) {
             case SelectMode.Default:
-                const character = tile.querySelector('[class*="characterWrapperStyle"]'); 
-                if (!character) {
-                    console.log("No character on tile");
-                    return;
-                }
-                selectedCharacterId = character.dataset.characterid;
-                console.log("selected character: ", selectedCharacterId);
-                currentSelectMode = SelectMode.Move;
-                document.body.style.cursor = "move";
                 break;
 
             case SelectMode.Move:

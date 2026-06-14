@@ -13,6 +13,7 @@ type Game struct {
 	BackgroundImage string
 	HideTiles       bool
 	CustomTiles     CustomTiles
+	Metadata        Metadata
 }
 
 type GridOption func(Grid)

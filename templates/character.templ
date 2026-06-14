@@ -6,15 +6,6 @@ import (
 	"tiles/pkg/models"
 )
 
-var characterImageMap = map[models.CharacterType]string{
-	models.CharacterEnemy: "skeleton.png",
-	models.CharacterHero:  "hero.png",
-}
-
-func characterBackgroundImage(character *models.Character) string {
-	return fmt.Sprintf("url('/assets/characters/%s')", characterImageMap[character.Type])
-}
-
 func px(value int) string {
 	return fmt.Sprintf("%dpx", value)
 }
@@ -39,7 +30,7 @@ css characterWrapperStyle(character *models.Character, tileSize int) {
 
 css characterNameStyle(character *models.Character, tileSize int) {
 	position: absolute;
-	bottom: { characterSize(character, tileSize) };
+	bottom: { templ.SafeCSSProperty(fmt.Sprintf("calc(%dpx * var(--grid-scale, 1))", 10+scaleToCharacter(character, tileSize))) };
 	left: 50%;
 	transform: translateX(-50%);
 	padding: 2px 6px;
@@ -85,13 +76,18 @@ css characterStyle(character *models.Character, tileSize int) {
 	transform: translateX(-50%);
 	width: { characterSize(character, tileSize) };
 	height: { characterSize(character, tileSize) };
-	background-image: { characterBackgroundImage(character) };
 	background-size: cover;
 	background-position: center;
 	background-repeat: no-repeat;
 	box-sizing: border-box;
 	filter: { coloredOutlineFilter(character) };
 	z-index: 1001;
+}
+
+css characterImage() {
+	width: 100%;
+	height: 100%;
+	object-fit: scale-down;
 }
 
 templ Character(tile models.Tile, tileSize, x, y int) {
@@ -104,6 +100,11 @@ templ Character(tile models.Tile, tileSize, x, y int) {
 		<div class={ characterNameStyle(tile.Character, tileSize) }>
 			{ tile.Character.Name }
 		</div>
-		<div class={ tileStyle(tileSize), characterStyle(tile.Character, tileSize) }></div>
+		<div class={ tileStyle(tileSize), characterStyle(tile.Character, tileSize) }>
+			<img
+				src={ tile.Character.Image }
+				class={ characterImage() }
+			/>
+		</div>
 	</div>
 }

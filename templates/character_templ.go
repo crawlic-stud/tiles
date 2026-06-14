@@ -14,15 +14,6 @@ import (
 	"tiles/pkg/models"
 )
 
-var characterImageMap = map[models.CharacterType]string{
-	models.CharacterEnemy: "skeleton.png",
-	models.CharacterHero:  "hero.png",
-}
-
-func characterBackgroundImage(character *models.Character) string {
-	return fmt.Sprintf("url('/assets/characters/%s')", characterImageMap[character.Type])
-}
-
 func px(value int) string {
 	return fmt.Sprintf("%dpx", value)
 }
@@ -54,7 +45,7 @@ func characterWrapperStyle(character *models.Character, tileSize int) templ.CSSC
 func characterNameStyle(character *models.Character, tileSize int) templ.CSSClass {
 	templ_7745c5c3_CSSBuilder := templruntime.GetBuilder()
 	templ_7745c5c3_CSSBuilder.WriteString(`position:absolute;`)
-	templ_7745c5c3_CSSBuilder.WriteString(string(templ.SanitizeCSS(`bottom`, characterSize(character, tileSize))))
+	templ_7745c5c3_CSSBuilder.WriteString(string(templ.SanitizeCSS(`bottom`, templ.SafeCSSProperty(fmt.Sprintf("calc(%dpx * var(--grid-scale, 1))", 10+scaleToCharacter(character, tileSize))))))
 	templ_7745c5c3_CSSBuilder.WriteString(`left:50%;`)
 	templ_7745c5c3_CSSBuilder.WriteString(`transform:translateX(-50%);`)
 	templ_7745c5c3_CSSBuilder.WriteString(`padding:2px 6px;`)
@@ -106,7 +97,6 @@ func characterStyle(character *models.Character, tileSize int) templ.CSSClass {
 	templ_7745c5c3_CSSBuilder.WriteString(`transform:translateX(-50%);`)
 	templ_7745c5c3_CSSBuilder.WriteString(string(templ.SanitizeCSS(`width`, characterSize(character, tileSize))))
 	templ_7745c5c3_CSSBuilder.WriteString(string(templ.SanitizeCSS(`height`, characterSize(character, tileSize))))
-	templ_7745c5c3_CSSBuilder.WriteString(string(templ.SanitizeCSS(`background-image`, characterBackgroundImage(character))))
 	templ_7745c5c3_CSSBuilder.WriteString(`background-size:cover;`)
 	templ_7745c5c3_CSSBuilder.WriteString(`background-position:center;`)
 	templ_7745c5c3_CSSBuilder.WriteString(`background-repeat:no-repeat;`)
@@ -114,6 +104,18 @@ func characterStyle(character *models.Character, tileSize int) templ.CSSClass {
 	templ_7745c5c3_CSSBuilder.WriteString(string(templ.SanitizeCSS(`filter`, coloredOutlineFilter(character))))
 	templ_7745c5c3_CSSBuilder.WriteString(`z-index:1001;`)
 	templ_7745c5c3_CSSID := templ.CSSID(`characterStyle`, templ_7745c5c3_CSSBuilder.String())
+	return templ.ComponentCSSClass{
+		ID:    templ_7745c5c3_CSSID,
+		Class: templ.SafeCSS(`.` + templ_7745c5c3_CSSID + `{` + templ_7745c5c3_CSSBuilder.String() + `}`),
+	}
+}
+
+func characterImage() templ.CSSClass {
+	templ_7745c5c3_CSSBuilder := templruntime.GetBuilder()
+	templ_7745c5c3_CSSBuilder.WriteString(`width:100%;`)
+	templ_7745c5c3_CSSBuilder.WriteString(`height:100%;`)
+	templ_7745c5c3_CSSBuilder.WriteString(`object-fit:scale-down;`)
+	templ_7745c5c3_CSSID := templ.CSSID(`characterImage`, templ_7745c5c3_CSSBuilder.String())
 	return templ.ComponentCSSClass{
 		ID:    templ_7745c5c3_CSSID,
 		Class: templ.SafeCSS(`.` + templ_7745c5c3_CSSID + `{` + templ_7745c5c3_CSSBuilder.String() + `}`),
@@ -153,7 +155,7 @@ func Character(tile models.Tile, tileSize, x, y int) templ.Component {
 		var templ_7745c5c3_Var3 string
 		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.ResolveAttributeValue(x)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/character.templ`, Line: 99, Col: 12}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/character.templ`, Line: 95, Col: 12}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var3)
 		if templ_7745c5c3_Err != nil {
@@ -166,7 +168,7 @@ func Character(tile models.Tile, tileSize, x, y int) templ.Component {
 		var templ_7745c5c3_Var4 string
 		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.ResolveAttributeValue(y)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/character.templ`, Line: 100, Col: 12}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/character.templ`, Line: 96, Col: 12}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var4)
 		if templ_7745c5c3_Err != nil {
@@ -179,7 +181,7 @@ func Character(tile models.Tile, tileSize, x, y int) templ.Component {
 		var templ_7745c5c3_Var5 string
 		templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.ResolveAttributeValue(tile.Character.ID)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/character.templ`, Line: 101, Col: 38}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/character.templ`, Line: 97, Col: 38}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var5)
 		if templ_7745c5c3_Err != nil {
@@ -227,7 +229,7 @@ func Character(tile models.Tile, tileSize, x, y int) templ.Component {
 		var templ_7745c5c3_Var9 string
 		templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(tile.Character.Name)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/character.templ`, Line: 105, Col: 24}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/character.templ`, Line: 101, Col: 24}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 		if templ_7745c5c3_Err != nil {
@@ -255,7 +257,42 @@ func Character(tile models.Tile, tileSize, x, y int) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "\"></div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var12 = []any{characterImage()}
+		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var12...)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "<img src=\"")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var13 string
+		templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.ResolveAttributeValue(tile.Character.Image)
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/character.templ`, Line: 105, Col: 30}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var13)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "\" class=\"")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var14 string
+		templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.ResolveAttributeValue(templ.CSSClasses(templ_7745c5c3_Var12).String())
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/character.templ`, Line: 1, Col: 0}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var14)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "\"></div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

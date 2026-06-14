@@ -145,10 +145,14 @@ templ Header(game models.Game) {
 			<div class={ logo() }>Tiles</div>
 		</div>
 		<div class={ navButtons() }>
-			<button class={ navButton(true) }>New Game</button>
+			<!-- New Game button and form -->
+			@NewGameForm()
+			<!---->
+			@AddCharacterForm(game.ID, game.Metadata.CharacterAssets)
 			<button class={ "selecter", iconButton(false) } onclick="switchSelectMove(this)">
 				<img src="/assets/icons/move.svg" class={ icon() }/>
 			</button>
+			<!---->
 			<div class={ scaleControl() }>
 				<button class={ scaleButton() } onclick="decreaseScale()">−</button>
 				<input
