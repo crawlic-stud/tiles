@@ -1,0 +1,115 @@
+package templates
+
+templ NewGameForm() {
+	<div data-popup-wrapper class={ popupWrapper() }>
+		<button
+			class={ navButton(true) }
+			onclick="togglePopup(this)"
+		>
+			New Game
+		</button>
+		<div class={ popup(), "popup" }>
+			<label class={ popupItem() }>
+				<span>Width</span>
+				<input id="game-width" type="number" value="50"/>
+			</label>
+			<label class={ popupItem() }>
+				<span>Height</span>
+				<input id="game-height" type="number" value="50"/>
+			</label>
+			<label class={ popupItem() }>
+				<span>Tile Size</span>
+				<input id="game-tile-size" type="number" value="50"/>
+			</label>
+			<label class={ popupItem() }>
+				<span>Background</span>
+				<input
+					id="game-background"
+					type="file"
+					accept="image/*"
+				/>
+			</label>
+			<button
+				class={ navButton(true) }
+				onclick="createGame()"
+			>
+				Create
+			</button>
+		</div>
+	</div>
+	<script>
+	async function uploadImage(file) {
+		if (!file) return "";
+
+		const formData = new FormData();
+		formData.append("image", file);
+
+		const response = await fetch("/images", {
+			method: "POST",
+			body: formData,
+		});
+
+		if (!response.ok) {
+			const text = await response.text().catch(() => "");
+			throw new Error("Image upload failed: " + text);
+		}
+
+		const data = await response.json();
+
+		if (!data || !data.url) {
+			throw new Error("Invalid upload response");
+		}
+
+		return data.url;
+	}
+
+	async function createGame() {
+		try {
+			const width = Number(document.getElementById("game-width").value);
+			const height = Number(document.getElementById("game-height").value);
+			const tileSize = Number(document.getElementById("game-tile-size").value);
+			const backgroundInput = document.getElementById("game-background");
+
+			let backgroundImage = "";
+			if (backgroundInput?.files?.length > 0) {
+				backgroundImage = await uploadImage(backgroundInput.files[0]);
+			}
+
+			const payload = {
+				width,
+				height,
+				tileSize,
+				customTiles: [],
+				characters: [],
+				backgroundImage: backgroundImage || "",
+			};
+
+			console.log("Create game payload:", payload);
+
+			const response = await fetch("/games", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify(payload),
+			});
+
+			if (!response.ok) {
+				const text = await response.text().catch(() => "");
+				throw new Error("Game creation failed: " + text);
+			}
+
+			const game = await response.json();
+
+			if (!game || !game.id) {
+				throw new Error("Invalid game response");
+			}
+
+			window.location.href = `/games/${game.id}`;
+		} catch (err) {
+			console.error(err);
+			alert(err.message);
+		}
+	}
+	</script>
+}

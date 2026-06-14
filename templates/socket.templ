@@ -35,17 +35,18 @@ class GameSocket {
         };
 
         this.socket.onclose = () => {
+            if (this.reconnectAttempts > 10) {
+                console.error("WebSocket permanently failed");
+                return;
+            }
+            
             console.log("Disconnected");
             connectionCircle.style.backgroundColor = "red";
             reconnected = true;
 
-            const delay = Math.min(
-                1000 * Math.pow(2, this.reconnectAttempts),
-                this.maxReconnectDelay,
-            );
+            const delay = Math.min(1000 * this.reconnectAttempts, this.maxReconnectDelay);
 
             this.reconnectAttempts++;
-
             console.log(`Reconnecting in ${delay}ms`);
 
             setTimeout(() => {
@@ -57,7 +58,7 @@ class GameSocket {
             console.error("Socket error:", err);
 
             // Force close so onclose handles reconnecting.
-            this.socket.close();
+            // this.socket.close();
         };
     }
 

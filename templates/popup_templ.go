@@ -24,6 +24,7 @@ func popup() templ.CSSClass {
 	templ_7745c5c3_CSSBuilder.WriteString(`top:calc(100% + 8px);`)
 	templ_7745c5c3_CSSBuilder.WriteString(`right:0;`)
 	templ_7745c5c3_CSSBuilder.WriteString(`min-width:220px;`)
+	templ_7745c5c3_CSSBuilder.WriteString(`max-width:670px;`)
 	templ_7745c5c3_CSSBuilder.WriteString(`background-color:#2d2d2d;`)
 	templ_7745c5c3_CSSBuilder.WriteString(`border:1px solid #444;`)
 	templ_7745c5c3_CSSBuilder.WriteString(`border-radius:8px;`)

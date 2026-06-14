@@ -45,28 +45,7 @@ func (h *Handler) CreateGame(r *http.Request) Response {
 		}
 
 		for _, character := range req.Characters {
-			// if character id is not passed, then its new
-			if character.ID == 0 {
-				characterDB, err := q.CreateCharacter(r.Context(), db.CreateCharacterParams{
-					Name:  character.Name,
-					Type:  string(character.Type),
-					Scale: character.Scale,
-					Image: character.Image,
-				})
-				if err != nil {
-					return err
-				}
-				character.ID = int(characterDB.ID)
-			}
-
-			// assign character id to the game
-			_, err = q.CreateGameCharacter(r.Context(), db.CreateGameCharacterParams{
-				GameID:      gameDb.ID,
-				CharacterID: int64(character.ID),
-				X:           int64(character.Position.X),
-				Y:           int64(character.Position.Y),
-			})
-			if err != nil {
+			if err = h.Store.AddCharacterToGameTx(r.Context(), q, character, gameDb.ID); err != nil {
 				return err
 			}
 		}
