@@ -12,7 +12,7 @@ css header() {
 	top: 0;
 	left: 0;
 	right: 0;
-	z-index: 10000;
+	z-index: 20000 !important;
 }
 
 css logo() {
@@ -149,6 +149,7 @@ templ Header(game models.Game) {
 			@NewGameForm()
 			<!---->
 			@AddCharacterForm(game.ID, game.Metadata.CharacterAssets)
+			<!---->
 			<button class={ "selecter", iconButton(false) } onclick="switchSelectMove(this)">
 				<img src="/assets/icons/move.svg" class={ icon() }/>
 			</button>

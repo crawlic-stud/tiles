@@ -10,7 +10,7 @@ func gridBackgroundImage(bgImage string) string {
 }
 
 css grid(height, width, tileSize int, backgroundImage string) {
-	margin-top: 70px;
+	margin-top: var(--header-height);
 	display: inline-grid;	
 	width: calc({ px(width * tileSize) } * var(--grid-scale, 1));
 	height: calc({ px(height * tileSize) } * var(--grid-scale, 1));

@@ -19,7 +19,7 @@ func gridBackgroundImage(bgImage string) string {
 
 func grid(height, width, tileSize int, backgroundImage string) templ.CSSClass {
 	templ_7745c5c3_CSSBuilder := templruntime.GetBuilder()
-	templ_7745c5c3_CSSBuilder.WriteString(`margin-top:70px;`)
+	templ_7745c5c3_CSSBuilder.WriteString(`margin-top:var(--header-height);`)
 	templ_7745c5c3_CSSBuilder.WriteString(`display:inline-grid;	
 	width: calc({ px(width * tileSize) } * var(--grid-scale, 1));`)
 	templ_7745c5c3_CSSBuilder.WriteString(`height:calc({ px(height * tileSize) } * var(--grid-scale, 1));`)

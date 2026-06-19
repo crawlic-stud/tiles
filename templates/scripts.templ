@@ -16,26 +16,20 @@ templ movementScript() {
                 const nextTile = document.querySelector(`[data-x="${x}"][data-y="${y}"]`);
                 if (!nextTile) continue;
 
-                const firstRect = character.getBoundingClientRect();
+                // NOTE: 1) uncomment to animate (laggy)
+                // const firstRect = character.getBoundingClientRect();
 
-                // move in DOM
                 nextTile.appendChild(character);
 
-                const lastRect = character.getBoundingClientRect();
-
-                const dx = firstRect.left - lastRect.left;
-                const dy = firstRect.top - lastRect.top;
-
-                // invert
-                character.style.transition = "none";
-                character.style.transform = `translateX(-50%) translate(${dx}px, ${dy}px)`;
-
-                // force reflow
-                character.getBoundingClientRect();
-
-                // play
-                character.style.transition = `transform ${delay}ms linear`;
-                character.style.transform = `translateX(-50%) translate(0px, 0px)`;
+                // NOTE: 2) uncomment to animate (laggy)
+                // const lastRect = character.getBoundingClientRect();
+                // const dx = firstRect.left - lastRect.left;
+                // const dy = firstRect.top - lastRect.top;
+                // character.style.transition = "none";
+                // character.style.transform = `translateX(-50%) translate(${dx}px, ${dy}px)`;
+                // character.getBoundingClientRect();
+                // character.style.transition = `transform ${delay}ms linear`;
+                // character.style.transform = `translateX(-50%) translate(0px, 0px)`;
 
                 await new Promise(r => setTimeout(r, delay));
             }
