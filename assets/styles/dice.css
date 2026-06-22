@@ -11,6 +11,12 @@
   height: 100%;
 }
 
+.bg-dice {
+  object-fit: scale-down;
+  width: 100%;
+  height: 100%;
+}
+
 .dice-btn.charge-button {
   font-size: 24px;
   font-weight: 700;
@@ -19,12 +25,18 @@
     background-color 0.1s linear,
     transform 0.1s ease;
   height: 100%;
+  max-width: 128px;
+  /* aspect-ratio: 1; */
 }
 
 .dice-btn.charge-button.charging {
   transform: translate(var(--jitter-x), var(--jitter-y));
   filter: brightness(1.2);
-  background: linear-gradient(180deg, hsl(var(--hue), 90%, 50%) 0%, #222 100%);
+  background: linear-gradient(
+    180deg,
+    hsl(var(--hue), 90%, 50%) 0%,
+    #000000aa 100%
+  );
   transition:
     background-color 0.1s linear,
     transform 0.1s ease;
