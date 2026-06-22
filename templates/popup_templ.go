@@ -20,18 +20,21 @@ func popupWrapper() templ.CSSClass {
 
 func popup() templ.CSSClass {
 	templ_7745c5c3_CSSBuilder := templruntime.GetBuilder()
-	templ_7745c5c3_CSSBuilder.WriteString(`position:absolute;`)
-	templ_7745c5c3_CSSBuilder.WriteString(`top:calc(100% + 8px);`)
-	templ_7745c5c3_CSSBuilder.WriteString(`right:0;`)
+	templ_7745c5c3_CSSBuilder.WriteString(`position:fixed;`)
+	templ_7745c5c3_CSSBuilder.WriteString(`top:50%;`)
+	templ_7745c5c3_CSSBuilder.WriteString(`left:50%;`)
+	templ_7745c5c3_CSSBuilder.WriteString(`transform:translate(-50%, -50%);`)
 	templ_7745c5c3_CSSBuilder.WriteString(`min-width:220px;`)
-	templ_7745c5c3_CSSBuilder.WriteString(`max-width:670px;`)
+	templ_7745c5c3_CSSBuilder.WriteString(`max-width:90vw;`)
+	templ_7745c5c3_CSSBuilder.WriteString(`max-height:90vh;`)
 	templ_7745c5c3_CSSBuilder.WriteString(`background-color:#2d2d2d;`)
-	templ_7745c5c3_CSSBuilder.WriteString(`border:1px solid #444;`)
 	templ_7745c5c3_CSSBuilder.WriteString(`border-radius:8px;`)
-	templ_7745c5c3_CSSBuilder.WriteString(`padding:12px;`)
-	templ_7745c5c3_CSSBuilder.WriteString(`display:none;`)
-	templ_7745c5c3_CSSBuilder.WriteString(`box-shadow:0 8px 24px rgba(0, 0, 0, 0.3);`)
+	templ_7745c5c3_CSSBuilder.WriteString(`padding:16px;`)
 	templ_7745c5c3_CSSBuilder.WriteString(`z-index:10001;`)
+	templ_7745c5c3_CSSBuilder.WriteString(`visibility:hidden;`)
+	templ_7745c5c3_CSSBuilder.WriteString(`opacity:0;`)
+	templ_7745c5c3_CSSBuilder.WriteString(`transition:opacity 0.25s ease;`)
+	templ_7745c5c3_CSSBuilder.WriteString(`pointer-events:auto;`)
 	templ_7745c5c3_CSSID := templ.CSSID(`popup`, templ_7745c5c3_CSSBuilder.String())
 	return templ.ComponentCSSClass{
 		ID:    templ_7745c5c3_CSSID,
@@ -78,7 +81,7 @@ func popupLogic() templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<style>\n    .popup-visible {\n        display: block !important;\n    }\n    </style><script>\n    function togglePopup(button) {\n        const popup = button.parentElement.querySelector(\".popup\");\n        document.querySelectorAll(\".popup-visible\").forEach(p => {\n            if (p !== popup) {\n                p.classList.remove(\"popup-visible\");\n            }\n        });\n        popup.classList.toggle(\"popup-visible\");\n    }\n\n    document.addEventListener(\"click\", (e) => {\n        const wrapper = e.target.closest(\"[data-popup-wrapper]\");\n\n        if (!wrapper) {\n            document.querySelectorAll(\".popup-visible\").forEach(p => {\n                p.classList.remove(\"popup-visible\");\n            });\n        }\n    });\n\n    </script>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<style>\n\t.popup-visible {\n\t\tvisibility: visible !important;\n\t\topacity: 1 !important;\n\t}\n\t</style><script>\n    function togglePopup(button) {\n        const popup = button.parentElement.querySelector(\".popup\");\n        document.querySelectorAll(\".popup-visible\").forEach(p => {\n            if (p !== popup) {\n                p.classList.remove(\"popup-visible\");\n            }\n        });\n        popup.classList.toggle(\"popup-visible\");\n    }\n\n\tfunction showPopup(button) {\n        const popup = button.parentElement.querySelector(\".popup\");\n\t\tdocument.querySelectorAll(\".popup-visible\").forEach(p => {\n\t\t\tif (p !== popup) {\n\t\t\t\tp.classList.remove(\"popup-visible\");\n\t\t\t}\n\t\t});\n\t\tpopup.classList.add(\"popup-visible\");\n\t}\n\n    document.addEventListener(\"click\", (e) => {\n        const wrapper = e.target.closest(\"[data-popup-wrapper]\");\n\n        if (!wrapper) {\n            document.querySelectorAll(\".popup-visible\").forEach(p => {\n                p.classList.remove(\"popup-visible\");\n            });\n        }\n    });\n    </script>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

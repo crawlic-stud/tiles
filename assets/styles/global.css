@@ -1,3 +1,11 @@
+:root {
+  --header-height: 70px;
+}
+
+.invisible {
+  background-color: transparent !important;
+}
+
 .walkable:hover {
   z-index: 1000;
   outline: 2px solid greenyellow;
