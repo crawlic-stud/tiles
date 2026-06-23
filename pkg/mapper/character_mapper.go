@@ -1,11 +1,11 @@
 package mapper
 
 import (
-	"tiles/pkg/db"
+	"tiles/pkg/db/gen"
 	"tiles/pkg/models"
 )
 
-func CharacterFromDB(character db.Character) *models.Character {
+func CharacterFromDB(character gen.Character) *models.Character {
 	return &models.Character{
 		ID:    int(character.ID),
 		Name:  character.Name,
@@ -15,8 +15,8 @@ func CharacterFromDB(character db.Character) *models.Character {
 	}
 }
 
-func GameCharacterFromDB[T db.GetGameCharactersRow | db.GetGameCharacterByIDRow](value T) *models.Character {
-	character := db.GetGameCharactersRow(value)
+func GameCharacterFromDB[T gen.GetGameCharactersRow | gen.GetGameCharacterByIDRow](value T) *models.Character {
+	character := gen.GetGameCharactersRow(value)
 	return &models.Character{
 		ID:    int(character.ID),
 		Name:  character.Name,

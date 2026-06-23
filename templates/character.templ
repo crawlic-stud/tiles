@@ -11,7 +11,7 @@ func px(value int) string {
 }
 
 func scaleToCharacter(character *models.Character, tileSize int) int {
-	return int(float64(tileSize) * character.Scale)
+	return int(float32(tileSize) * character.Scale)
 }
 
 func characterSize(character *models.Character, tileSize int) templ.SafeCSSProperty {

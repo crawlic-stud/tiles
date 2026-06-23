@@ -6,7 +6,8 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"tiles/pkg/store"
+	"tiles/pkg/config"
+	db "tiles/pkg/db/store"
 )
 
 const assetsDir = "assets"
@@ -15,12 +16,14 @@ func Start() {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	storage, err := store.New("tiles.db")
+	cfg := config.Load()
+	storage, err := db.New(ctx, cfg.PgDsn)
 	if err != nil {
 		panic(err)
 	}
-	app := New(storage)
+	defer storage.Close()
 
+	app := New(storage)
 	go app.RunSocketHub(ctx)
 
 	// games handles

@@ -4,15 +4,15 @@ import (
 	"context"
 	"encoding/json"
 	"net/http"
-	"tiles/pkg/store"
+	db "tiles/pkg/db/store"
 )
 
 type Handler struct {
-	Store *store.Store
+	Store *db.Store
 	hub   *GameHub
 }
 
-func New(store *store.Store) *Handler {
+func New(store *db.Store) *Handler {
 	return &Handler{
 		Store: store,
 		hub:   NewHub(),

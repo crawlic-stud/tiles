@@ -1,9 +1,9 @@
-package store
+package db
 
 import (
 	"context"
 	"errors"
-	"tiles/pkg/db"
+	"tiles/pkg/db/gen"
 	"tiles/pkg/models"
 )
 
@@ -11,15 +11,15 @@ func (s *Store) AddCharacterToGame(ctx context.Context, character models.Charact
 	return s.AddCharacterToGameTx(ctx, s.Queries, character, gameID)
 }
 
-func (s *Store) AddCharacterToGameTx(ctx context.Context, q *db.Queries, character models.Character, gameID int64) error {
+func (s *Store) AddCharacterToGameTx(ctx context.Context, tx *gen.Queries, character models.Character, gameID int64) error {
 	// get game
-	game, err := q.GetGameByID(ctx, gameID)
+	game, err := tx.GetGameByID(ctx, gameID)
 	if err != nil {
 		return err
 	}
 
 	// verify position, find a new one if needed
-	allCharacters, err := q.GetGameCharacters(ctx, gameID)
+	allCharacters, err := tx.GetGameCharacters(ctx, gameID)
 	if err != nil {
 		return err
 	}
@@ -48,7 +48,7 @@ func (s *Store) AddCharacterToGameTx(ctx context.Context, q *db.Queries, charact
 
 	// if character id is not passed, then its new
 	if character.ID == 0 {
-		characterDB, err := q.CreateCharacter(ctx, db.CreateCharacterParams{
+		characterDB, err := tx.CreateCharacter(ctx, gen.CreateCharacterParams{
 			Name:  character.Name,
 			Type:  string(character.Type),
 			Scale: character.Scale,
@@ -61,11 +61,11 @@ func (s *Store) AddCharacterToGameTx(ctx context.Context, q *db.Queries, charact
 	}
 
 	// assign character id to the game
-	_, err = q.CreateGameCharacter(ctx, db.CreateGameCharacterParams{
+	_, err = tx.CreateGameCharacter(ctx, gen.CreateGameCharacterParams{
 		GameID:      gameID,
 		CharacterID: int64(character.ID),
-		X:           int64(character.Position.X),
-		Y:           int64(character.Position.Y),
+		X:           int32(character.Position.X),
+		Y:           int32(character.Position.Y),
 	})
 	return err
 }

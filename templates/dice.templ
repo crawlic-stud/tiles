@@ -9,8 +9,7 @@ css diceOverlay() {
 
 templ DiceOverlay() {
 	<script>
-    const defaultDice = {"d20": 1} 
-    var selectedDice = defaultDice;
+    var selectedDice = {};
 
     function addDice(dice, count) {
         if (!selectedDice[dice]) {
@@ -25,8 +24,8 @@ templ DiceOverlay() {
     }
 
     function clearDice() {
-        selectedDice = defaultDice;
-        document.getElementById("selected-dice").value = "1d20";
+        selectedDice = {};
+        document.getElementById("selected-dice").value = "";
     }
     </script>
 	<!---->
@@ -42,7 +41,7 @@ templ DiceOverlay() {
 					<button class="dice-btn small-btn" onclick="addDice('d20', 1)">+1d20</button>
 					<button class="dice-btn small-btn" onclick="addDice('d100', 1)">+1d100</button>
 				</div>
-				<input id="selected-dice" type="text" value="1d20" disabled autocomplete="off"/>
+				<input id="selected-dice" type="text" placeholder="1d20" disabled autocomplete="off"/>
 				<button class="dice-clear-btn" onclick="clearDice()">Clear</button>
 			</div>
 			<button

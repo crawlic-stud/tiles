@@ -2,11 +2,11 @@ package mapper
 
 import (
 	"encoding/json"
-	"tiles/pkg/db"
+	"tiles/pkg/db/gen"
 	"tiles/pkg/models"
 )
 
-func GameFromDB(gameDB db.Game) (game models.Game, err error) {
+func GameFromDB(gameDB gen.Game) (game models.Game, err error) {
 	game = models.Game{
 		ID:              gameDB.ID,
 		Width:           int(gameDB.Width),
