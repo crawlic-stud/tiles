@@ -3,10 +3,10 @@ package server
 import (
 	"log"
 	"net/http"
-	"tiles/pkg/db"
+	"tiles/pkg/db/gen"
 	gamelogic "tiles/pkg/game"
+	"tiles/pkg/mapper"
 	"tiles/pkg/models"
-	"tiles/pkg/server/mapper"
 )
 
 type MoveCharacterRequest struct {
@@ -35,7 +35,7 @@ func (h *Handler) MoveCharacter(r *http.Request) Response {
 		return JSONErrorf(http.StatusBadRequest, "cant find game with ID=%d: %v", req.GameID, err)
 	}
 
-	characterDb, err := h.Store.GetGameCharacterByID(r.Context(), db.GetGameCharacterByIDParams{
+	characterDb, err := h.Store.GetGameCharacterByID(r.Context(), gen.GetGameCharacterByIDParams{
 		ID:     req.ID,
 		GameID: req.GameID,
 	})
@@ -52,9 +52,9 @@ func (h *Handler) MoveCharacter(r *http.Request) Response {
 		return JSONErrorf(http.StatusBadRequest, "failed to calculate path")
 	}
 
-	err = h.Store.UpdateCharacterPosition(r.Context(), db.UpdateCharacterPositionParams{
-		X:           req.X,
-		Y:           req.Y,
+	err = h.Store.UpdateCharacterPosition(r.Context(), gen.UpdateCharacterPositionParams{
+		X:           int32(req.X),
+		Y:           int32(req.Y),
 		GameID:      req.GameID,
 		CharacterID: characterDb.ID,
 	})

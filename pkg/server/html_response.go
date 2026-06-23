@@ -3,6 +3,7 @@ package server
 import (
 	"fmt"
 	"net/http"
+	"tiles/pkg/helpers"
 	"tiles/templates"
 
 	"github.com/a-h/templ"
@@ -14,18 +15,12 @@ type HTMLResponse struct {
 }
 
 func (r HTMLResponse) Write(w http.ResponseWriter, req *http.Request) {
-	status := r.StatusCode
-	if status == 0 {
-		status = http.StatusOK
-	}
-
-	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	w.WriteHeader(status)
-
-	templ.Handler(
+	handler := templ.Handler(
 		r.Component,
 		templ.WithStreaming(),
-	).ServeHTTP(w, req)
+	)
+	handler.Status = helpers.Ternary(r.StatusCode == 0, int(http.StatusOK), r.StatusCode)
+	handler.ServeHTTP(w, req)
 }
 
 func HTML(component templ.Component) Response {

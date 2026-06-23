@@ -42,7 +42,7 @@ func DiceOverlay() templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<script>\n    const defaultDice = {\"d20\": 1} \n    var selectedDice = defaultDice;\n\n    function addDice(dice, count) {\n        if (!selectedDice[dice]) {\n            selectedDice[dice] = 0;\n        }\n        selectedDice[dice] += 1;\n        var diceString = \"\";\n        for (const [diceType, amount] of Object.entries(selectedDice)) {\n            diceString += `${amount}${diceType} `;\n        }\n        document.getElementById(\"selected-dice\").value = diceString;\n    }\n\n    function clearDice() {\n        selectedDice = defaultDice;\n        document.getElementById(\"selected-dice\").value = \"1d20\";\n    }\n    </script><!---->")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<script>\n    var selectedDice = {};\n\n    function addDice(dice, count) {\n        if (!selectedDice[dice]) {\n            selectedDice[dice] = 0;\n        }\n        selectedDice[dice] += 1;\n        var diceString = \"\";\n        for (const [diceType, amount] of Object.entries(selectedDice)) {\n            diceString += `${amount}${diceType} `;\n        }\n        document.getElementById(\"selected-dice\").value = diceString;\n    }\n\n    function clearDice() {\n        selectedDice = {};\n        document.getElementById(\"selected-dice\").value = \"\";\n    }\n    </script><!---->")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -86,7 +86,7 @@ func DiceOverlay() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "\"><div><div><button class=\"dice-btn small-btn\" onclick=\"addDice('d4', 1)\">+1d4</button> <button class=\"dice-btn small-btn\" onclick=\"addDice('d6', 1)\">+1d6</button> <button class=\"dice-btn small-btn\" onclick=\"addDice('d8', 1)\">+1d8</button> <button class=\"dice-btn small-btn\" onclick=\"addDice('d10', 1)\">+1d10</button> <button class=\"dice-btn small-btn\" onclick=\"addDice('d12', 1)\">+1d12</button> <button class=\"dice-btn small-btn\" onclick=\"addDice('d20', 1)\">+1d20</button> <button class=\"dice-btn small-btn\" onclick=\"addDice('d100', 1)\">+1d100</button></div><input id=\"selected-dice\" type=\"text\" value=\"1d20\" disabled autocomplete=\"off\"> <button class=\"dice-clear-btn\" onclick=\"clearDice()\">Clear</button></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "\"><div><div><button class=\"dice-btn small-btn\" onclick=\"addDice('d4', 1)\">+1d4</button> <button class=\"dice-btn small-btn\" onclick=\"addDice('d6', 1)\">+1d6</button> <button class=\"dice-btn small-btn\" onclick=\"addDice('d8', 1)\">+1d8</button> <button class=\"dice-btn small-btn\" onclick=\"addDice('d10', 1)\">+1d10</button> <button class=\"dice-btn small-btn\" onclick=\"addDice('d12', 1)\">+1d12</button> <button class=\"dice-btn small-btn\" onclick=\"addDice('d20', 1)\">+1d20</button> <button class=\"dice-btn small-btn\" onclick=\"addDice('d100', 1)\">+1d100</button></div><input id=\"selected-dice\" type=\"text\" placeholder=\"1d20\" disabled autocomplete=\"off\"> <button class=\"dice-clear-btn\" onclick=\"clearDice()\">Clear</button></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

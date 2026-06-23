@@ -3,7 +3,7 @@ package server
 import (
 	"encoding/json"
 	"net/http"
-	"tiles/pkg/db"
+	"tiles/pkg/db/gen"
 	"tiles/pkg/models"
 )
 
@@ -31,14 +31,14 @@ func (h *Handler) CreateGame(r *http.Request) Response {
 		return JSONErrorf(http.StatusBadRequest, "failed to serialize tiles: %v", err)
 	}
 
-	var gameDb db.Game
-	if err = h.Store.WithTx(r.Context(), func(q *db.Queries) error {
-		gameDb, err = q.CreateGame(r.Context(), db.CreateGameParams{
+	var gameDb gen.Game
+	if err = h.Store.WithTx(r.Context(), func(q *gen.Queries) error {
+		gameDb, err = q.CreateGame(r.Context(), gen.CreateGameParams{
 			Background:  req.BackgroundImage,
-			Width:       int64(req.Width),
-			Height:      int64(req.Height),
-			TileSize:    int64(req.TileSize),
-			CustomTiles: string(tilesJSON),
+			Width:       int32(req.Width),
+			Height:      int32(req.Height),
+			TileSize:    int32(req.TileSize),
+			CustomTiles: tilesJSON,
 		})
 		if err != nil {
 			return err

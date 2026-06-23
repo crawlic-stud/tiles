@@ -1,10 +1,10 @@
-package store
+package db
 
 import (
 	"context"
 	"fmt"
+	"tiles/pkg/mapper"
 	"tiles/pkg/models"
-	"tiles/pkg/server/mapper"
 )
 
 func (s *Store) GetGameWithGrid(ctx context.Context, gameID int64) (game models.Game, err error) {

@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"os"
 	"strconv"
-	"tiles/pkg/server/mapper"
+	"tiles/pkg/mapper"
 	"tiles/templates"
 )
 

@@ -2,29 +2,30 @@
 // versions:
 //   sqlc v1.31.1
 
-package db
+package gen
 
 type Character struct {
 	ID    int64
 	Name  string
 	Type  string
-	Scale float64
+	Scale float32
 	Image string
 }
 
 type Game struct {
 	ID          int64
-	CustomTiles string
+	CustomTiles []byte
 	Background  string
-	TileSize    int64
+	TileSize    int32
 	HideTiles   bool
-	Width       int64
-	Height      int64
+	Width       int32
+	Height      int32
 }
 
 type GameCharacter struct {
+	ID          int64
 	GameID      int64
 	CharacterID int64
-	X           int64
-	Y           int64
+	X           int32
+	Y           int32
 }

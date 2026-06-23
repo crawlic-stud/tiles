@@ -3,7 +3,7 @@ package server
 import (
 	"encoding/json"
 	"net/http"
-	"tiles/pkg/db"
+	"tiles/pkg/db/gen"
 	"tiles/pkg/models"
 )
 
@@ -31,17 +31,12 @@ func (h *Handler) PlaceTiles(r *http.Request) Response {
 		return JSONErrorf(http.StatusBadRequest, "failed to serialize tiles: %v", err)
 	}
 
-	// TODO: when moving to postgres - update json directly
-	if err = h.Store.UpdateGameTiles(r.Context(), db.UpdateGameTilesParams{
-		CustomTiles: string(tilesJSON),
+	if err = h.Store.UpdateGameTiles(r.Context(), gen.UpdateGameTilesParams{
+		CustomTiles: tilesJSON,
 		ID:          req.GameID,
 	}); err != nil {
 		return JSONErrorf(http.StatusInternalServerError, "failed to update game grid: %v", err)
 	}
-
-	// if err = h.hub.BroadcastRerender(req.GameID); err != nil {
-	// 	return JSONErrorf(http.StatusInternalServerError, "failed to broadcast rerender: %v", err)
-	// }
 
 	return JSON(http.StatusOK, nil)
 }

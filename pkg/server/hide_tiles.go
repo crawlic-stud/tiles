@@ -2,7 +2,7 @@ package server
 
 import (
 	"net/http"
-	"tiles/pkg/db"
+	"tiles/pkg/db/gen"
 )
 
 type HideTilesRequest struct {
@@ -16,7 +16,7 @@ func (h *Handler) HideTiles(r *http.Request) Response {
 		return JSONErrorf(http.StatusBadRequest, "invalid request body: %v", err)
 	}
 
-	if err = h.Store.HideGameTiles(r.Context(), db.HideGameTilesParams{
+	if err = h.Store.HideGameTiles(r.Context(), gen.HideGameTilesParams{
 		HideTiles: req.Hide,
 		ID:        req.GameID,
 	}); err != nil {
